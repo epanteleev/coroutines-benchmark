@@ -8,6 +8,7 @@ RED=`tput setaf 1`
 GREEN=`tput setaf 2`
 RESET=`tput sgr0`
 
+ROOT=$(pwd)
 
 function run_loom() {
   echo -e "$RED Coroutines: $2 $RESET"
@@ -19,12 +20,16 @@ function run_go() {
   $GO_HOME/bin/go run $1 $2 
 }
 
-function run_kotlin() {
-  echo -e "$RED Coroutines: $3 $RESET"
-
+function build_kotlin() {
+  echo -e "$RED Build $1 $RESET"
   cd $1
   $MAVEN_HOME/bin/mvn package > log.txt
-  JAR_FILE="target\\$2-1.0-SNAPSHOT-jar-with-dependencies.jar"
+  cd $ROOT
+}
+
+function run_kotlin() {
+  echo -e "$RED Coroutines: $3 $RESET"
+  JAR_FILE="$1/target/$2-1.0-SNAPSHOT-jar-with-dependencies.jar"
   $JAVA_HOME/bin/java -jar $JAR_FILE $3
 }
 
@@ -40,5 +45,11 @@ run_go go/bench0.go 10000
 run_go go/bench0.go 100000
 run_go go/bench0.go 1000000
 
+
+build_kotlin kotlin/bench0
+
 echo -e "$GREEN ...RUN KOTLIN... $RESET"
 run_kotlin kotlin/bench0 bench0 1000                                          
+run_kotlin kotlin/bench0 bench0 10000                                          
+run_kotlin kotlin/bench0 bench0 100000                                          
+run_kotlin kotlin/bench0 bench0 1000000                                          

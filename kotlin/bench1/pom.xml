@@ -88,7 +88,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.coroutines.benchmark.HelloKt</mainClass>
+                            <mainClass>org.coroutines.benchmark.Bench1Kt</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

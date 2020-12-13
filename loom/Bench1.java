@@ -17,9 +17,10 @@ public class Bench1 {
         AtomicLong startPos = new AtomicLong(0L);
         for (int i = 0; i < numCoroutines; i++) {
             threadPool[i] = Thread.startVirtualThread(() -> {
-                while (inc.addAndGet(1) < NUM_HELLO) {
-                    write(channel, startPos.get(), ByteBuffer.wrap(message.getBytes()));
-                    startPos.addAndGet(message.length());
+                while (inc.get() < NUM_HELLO) {
+                    inc.addAndGet(1);
+                    var pos = startPos.getAndAdd(message.length());
+                    write(channel, pos, ByteBuffer.wrap(message.getBytes()));
                 }
             });
         }
@@ -38,7 +39,7 @@ public class Bench1 {
 
             @Override
             public void failed(Throwable e, String attachment) {
-                //Todo
+                assert false;
             }
         });
     }

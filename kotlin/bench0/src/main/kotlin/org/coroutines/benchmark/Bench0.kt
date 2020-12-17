@@ -16,6 +16,7 @@ fun task(numCoroutines: Long) {
 
 fun main(args: Array<String>) {
     val numCoroutines = args[0].toLong()
+	task(1_000_000) //warm up
 
     val startTime = System.currentTimeMillis()
     task(numCoroutines)

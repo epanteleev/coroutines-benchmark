@@ -50,7 +50,7 @@ func main() {
 		timer := time.NewTimer(time.Second * 30)
 		select {
 		case <-timer.C:
-			fmt.Printf("Connection request size: %d\n", numReq)
+			fmt.Printf("Connection_request_size: %d\n", numReq)
 			os.Exit(0)
 		}
 	}()

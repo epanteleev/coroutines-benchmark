@@ -10,9 +10,9 @@ import java.nio.channels.SocketChannel;
 public class Bench2 {
 
     void handle(SocketChannel channel) {
+        var buf = ByteBuffer.allocate(100);
         try {
             while (channel.finishConnect()) {
-                var buf = ByteBuffer.allocate(100);
                 var n = channel.read(buf);
                 if (n != -1) {
                     buf.flip();
@@ -37,16 +37,6 @@ public class Bench2 {
             }
         } catch (ClosedChannelException e) {
             System.out.println("listener closed");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void exchangeGreeting(SocketAddress address)  {
-        try {
-            var sock = SocketChannel.open();
-            sock.connect(address);
-            sock.write(ByteBuffer.wrap("Hello".getBytes()));
         } catch (IOException e) {
             e.printStackTrace();
         }

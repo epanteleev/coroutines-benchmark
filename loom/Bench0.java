@@ -17,8 +17,11 @@ public class Bench0 {
 
     public static void main(String[] args) throws InterruptedException {
         int numCoroutines = Integer.parseInt(args[0]);
+		threadPool = new Thread[5_000_000];
+		
+		task(5_000_000);
+        
 		threadPool = new Thread[numCoroutines];
-
         long startTime = System.currentTimeMillis();
         task(numCoroutines);
         long endTime = System.currentTimeMillis();

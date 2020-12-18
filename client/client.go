@@ -21,7 +21,6 @@ func connect(ln *net.Conn, numReq *int64, wg *sync.WaitGroup) {
 		if err != nil {
 			return
 		}
-
 		n, err := (*ln).Read(buf)
 		if err != nil {
 			return

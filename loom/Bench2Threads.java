@@ -1,14 +1,14 @@
 import javax.imageio.metadata.IIOMetadataNode;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.net.SocketException;
 
-public class Bench2 {
+public class Bench2Threads {
 
     private void handle(SocketChannel channel) {
         var buf = ByteBuffer.allocate(100);
@@ -25,7 +25,9 @@ public class Bench2 {
                     return;
                 }
             }
-        } catch (SocketException ignore) {
+        }
+		catch (SocketException ignore) {
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -35,7 +37,7 @@ public class Bench2 {
         try (listener) {
             while (listener.isOpen()) {
                 var client = listener.accept();
-                Thread.startVirtualThread(() -> handle(client));
+                new Thread(() -> handle(client)).start();
             }
         } catch (ClosedChannelException e) {
             System.out.println("listener closed");
@@ -48,14 +50,15 @@ public class Bench2 {
         var backlog = 256;
         var listener = ServerSocketChannel.open()
                 .bind(new InetSocketAddress(port), backlog);
-        var th = Thread.startVirtualThread(() -> handle(listener));
+        var th = new Thread(() -> handle(listener));
+        th.start();
         th.join();
     }
 
     public static void main(String[] args) {
         var port = Integer.parseInt(args[0]);
         try {
-            new Bench2().task(port);
+            new Bench2Threads().task(port);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

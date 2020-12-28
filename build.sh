@@ -8,3 +8,8 @@ function build_kotlin() {
   $MAVEN_HOME/bin/mvn package > log.txt
   cd $ROOT
 }
+
+function build_go() {
+  echo -e "$YELLOW Build $1 $RESET"
+  $GO_HOME/bin/go build $1 
+}

@@ -10,23 +10,36 @@ import (
 	"time"
 )
 
-const message = "Hello Server!"
+const message = "Hello_Server!"
 
-func connect(ln *net.Conn, numReq *int64, wg *sync.WaitGroup) {
-	defer wg.Done()
+func Connect(address string, numReq *int64, wg *sync.WaitGroup) {
+	ln, err := net.Dial("tcp", address)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		ln.Close()
+		wg.Done()
+	}()
 
-	buf := make([]byte, 100)
+	buf := make([]byte, 13)
 	for {
-		_, err := (*ln).Write([]byte(message))
+		m := []byte(message)
+		_, err := ln.Write(m)
 		if err != nil {
-			return
-		}
-		n, err := (*ln).Read(buf)
-		if err != nil {
-			return
+			break
 		}
 
+		n, err := ln.Read(buf)
+		if err != nil {
+			break
+		}
+
+		if string(buf) != message {
+			panic(string(buf))
+		}
 		atomic.AddInt64(numReq, 1)
+
 		buf = buf[0: n]
 	}
 }
@@ -35,18 +48,19 @@ func main() {
 	address := "localhost:" + os.Args[1]
 	numCoroutines, _ := strconv.ParseInt(os.Args[2], 10, 32)
 
-	var connections = make([]net.Conn, numCoroutines)
-	for i := 0; i < len(connections); i++ {
+	var numReq int64 = 0
+	var wg sync.WaitGroup
+	for i := int64(0); i < numCoroutines; i++ {
 		var err error
-		connections[i], err = net.Dial("tcp", address)
+		go Connect(address, &numReq, &wg)
+		wg.Add(1)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	var numReq int64 = 0
 	go func() {
-		timer := time.NewTimer(time.Second * 30)
+		timer := time.NewTimer(time.Second * 60)
 		select {
 		case <-timer.C:
 			fmt.Printf("Connection_request_size: %d\n", numReq)
@@ -54,10 +68,5 @@ func main() {
 		}
 	}()
 
-	var wg sync.WaitGroup
-	for _, conn := range connections {
-		go connect(&conn, &numReq, &wg)
-		wg.Add(1)
-	}
 	wg.Wait()
 }

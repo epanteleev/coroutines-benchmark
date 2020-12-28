@@ -9,7 +9,7 @@ import (
 
 func handleConn(conn net.Conn, wg *sync.WaitGroup) {
 	defer wg.Done()
-	var buf = make([]byte, 100)
+	var buf = make([]byte, 13)
 	for {
 		n, err := conn.Read(buf)
 		if err != nil {

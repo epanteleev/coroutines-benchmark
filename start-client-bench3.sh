@@ -4,8 +4,9 @@ source ./run.sh
 source ./build.sh
 
 numTest=10
+EXE=./client-bench3.exe
 
-build_go client/client.go
+build_go client/client-bench3.go
 
 echo -e "$GREEN ...Start Client... $RESET"
 
@@ -13,7 +14,7 @@ function start() {
   echo -e "Connections: $1"
   array=()
   for ((i = 0; i < $numTest; i++)) do
-    res=$(./client.exe 8888 $1)
+    res=$($EXE 8888 $1)
     nReq=$(echo $res | awk '{print $2}')
     array+=( $nReq )
     echo -e $res
@@ -41,14 +42,11 @@ function start() {
 
 }
 
-#start 100
-#start 1000
-#start 2000
+start 100
+start 1000
+start 2000
 start 3000
 start 4000
 start 5000
 
-rm client.exe
-
-
-
+rm $EXE

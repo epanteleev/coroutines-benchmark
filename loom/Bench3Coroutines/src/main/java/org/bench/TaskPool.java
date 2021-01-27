@@ -1,21 +1,20 @@
+package org.bench;
+
+import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class TaskPool {
     private final Worker[] workers;
-    private final ThreadPoolExecutor executor;
 
-    public TaskPool(int tasks) {
+    public TaskPool(int tasks, BufferedImage img) {
         Dispatcher.setup(tasks);
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(tasks);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(tasks);
         this.workers = new Worker[tasks];
 
         for (int i = 0; i < tasks; i++) {
-            this.workers[i] = new Worker();
+            this.workers[i] = new Worker(img);
         }
-    }
-
-    public void start() {
         for (Worker th: this.workers) {
             executor.execute(th);
         }

@@ -19,7 +19,7 @@ function run_go() {
   $GO_HOME/bin/go run $1 $2 
 }
 
-function run_kotlin() {
+function run_jar() {
   JAR_FILE="$1/target/$2-1.0-SNAPSHOT-jar-with-dependencies.jar"
   $JAVA_HOME/bin/java -jar $JAR_FILE $3
 }
@@ -36,9 +36,9 @@ function run_go0() {
   run_go $1 "$2" 
 }
 
-function run_kotlin0() {
+function run_kotlin() {
   numCoroutines=$(echo $3 | awk '{print $1}')
   echo -e "$RED Coroutines: $numCoroutines $RESET"
-  run_kotlin $1 "$2" "$3"
+  run_jar $1 "$2" "$3"
 }
 

@@ -1,3 +1,8 @@
+package org.bench;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -5,13 +10,17 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Worker implements Runnable {
     private Selector selector;
     private final ByteBuffer readBuffer = ByteBuffer.allocate(13);
+    private BufferedImage img;
 
-    public Worker() {
+    public Worker(BufferedImage img) {
+        this.img = img;
         try {
             this.selector = SelectorProvider.provider().openSelector();
         } catch (IOException e) {
@@ -28,24 +37,41 @@ public class Worker implements Runnable {
         socketChannel.configureBlocking(false);
 
         selector.wakeup();
-        socketChannel.register(this.selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        socketChannel.register(this.selector, SelectionKey.OP_READ);
+    }
+
+    private static ByteBuffer convertImageData(BufferedImage bi) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(bi, "png", out);
+            return ByteBuffer.wrap(out.toByteArray());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     private void read(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
 
-        this.readBuffer.clear();
-
         try {
-            socketChannel.read(this.readBuffer);
+            int n = socketChannel.read(this.readBuffer);
             readBuffer.flip();
-            socketChannel.write(this.readBuffer);
-
+            int opcode = readBuffer.get();
+            //System.out.println(opcode + "|");
+            if (opcode == 48) {
+                socketChannel.write(convertImageData(this.img));
+            } else {
+                socketChannel.write(ByteBuffer.wrap("nop".getBytes()));
+            }
+            //socketChannel.write(readBuffer);
         } catch (IOException e) {
             // The remote forcibly closed the connection, cancel
             // the selection key and close the channel.
             key.cancel();
             socketChannel.close();
+        } finally {
+            this.readBuffer.clear();
         }
     }
 
@@ -55,9 +81,9 @@ public class Worker implements Runnable {
             try {
                 this.selector.select();
                 // Iterate over the set of keys for which events are available
-                Iterator selectedKeys = this.selector.selectedKeys().iterator();
+                Iterator<SelectionKey> selectedKeys = this.selector.selectedKeys().iterator();
                 while (selectedKeys.hasNext()) {
-                    SelectionKey key = (SelectionKey) selectedKeys.next();
+                    SelectionKey key = selectedKeys.next();
                     selectedKeys.remove();
 
                     if (!key.isValid()) {

@@ -41,9 +41,9 @@ function start() {
 
 }
 
-#start 100
-#start 1000
-#start 2000
+start 100
+start 1000
+start 2000
 start 3000
 start 4000
 start 5000

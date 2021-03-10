@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GO_HOME='D:\Go'
-LOOM_HOME='D:\Java\jdk-16'
+LOOM_HOME='D:\Java\jdk-17'
 MAVEN_HOME='D:\Java\apache-maven-3.6.3'
 
 RED=`tput setaf 1`

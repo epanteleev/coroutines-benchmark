@@ -41,6 +41,6 @@ public class BenchSwitch {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime) / 1000000;
-        System.out.println( numCoroutines + " coroutines: " +  COUNT + " switches in " + duration + " ms," + (1000 * COUNT) / duration +" switches per second\n");
+        System.out.println( numCoroutines + " coroutines: " +  COUNT + " switches in " + duration + " ms, " + (1000 * COUNT) / duration +" switches per second\n");
     }
 }

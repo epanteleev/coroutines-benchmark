@@ -22,10 +22,13 @@ public class Bench0 {
 		task(5_000_000);
         
 		threadPool = new Thread[numCoroutines];
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
+        
         task(numCoroutines);
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
 
-        System.out.println("Execution time: " + (endTime - startTime) + "ms.");
+        long duration = (endTime - startTime) / 1000000;
+        
+        System.out.println("Execution time: " + duration + " ms.");
     }
 }

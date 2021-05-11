@@ -5,7 +5,7 @@ NUM_TESTS = 10
 
 
 def startBench(coroutines) -> int:
-    return int(util.start_proc(['benchSwitch.exe', coroutines])[7])
+    return int(util.run(['benchSwitch.exe', coroutines])[7])
 
 
 print('--Start go bench--')

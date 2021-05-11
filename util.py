@@ -1,9 +1,10 @@
+from sys import platform as _platform
 import subprocess
 import math
 
-GO_HOME = 'D:\Go'
-LOOM_HOME = 'D:\Java\jdk-17'
-MAVEN_HOME = 'D:\Java\apache-maven-3.6.3'
+GO_HOME = '/home/user/Slag/coroutines-benchmark/sdk/go'
+LOOM_HOME = '/home/user/Slag/coroutines-benchmark/sdk/jdk-16'
+MAVEN_HOME = '/home/user/Slag/coroutines-benchmark/sdk/apache-maven-3.6.3'
 
 
 def stdev(data):
@@ -24,6 +25,13 @@ def stdev(data):
 
 def start_proc(args_list: list):
     return subprocess.check_output(args_list).split()
+
+
+def run(command: str, args_list: list):
+    if _platform == 'linux':
+        command = './' + command
+
+    return subprocess.check_output([command] + args_list).split()
 
 
 def run_loom(class_name, arg):

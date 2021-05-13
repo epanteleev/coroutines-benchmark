@@ -16,3 +16,5 @@ time = [startBench('100000') for i in range(NUM_TESTS)]
 mean, std = util.stdev(time)
 
 print('Result: {} +/- {}'.format(mean, std))
+
+util.remove('bench0')

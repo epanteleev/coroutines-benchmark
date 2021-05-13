@@ -1,11 +1,11 @@
 from sys import platform as _platform
 import subprocess
 import math
+import os
 
-GO_HOME = '/home/user/Slag/coroutines-benchmark/sdk/go'
-LOOM_HOME = '/home/user/Slag/coroutines-benchmark/sdk/jdk-16'
-MAVEN_HOME = '/home/user/Slag/coroutines-benchmark/sdk/apache-maven-3.6.3'
-
+GO_HOME = 'D:\Go'
+LOOM_HOME = 'D:\Java\jdk-17'
+MAVEN_HOME = 'D:\Java\apache-maven-3.6.3'
 
 def stdev(data):
     def mean(data):
@@ -23,13 +23,22 @@ def stdev(data):
     return m, std_dev
 
 
+def remove(name: str):
+    if _platform == 'win32':
+        name = '%s.exe' % name
+    
+    os.remove(name)
+    
+
 def start_proc(args_list: list):
     return subprocess.check_output(args_list).split()
 
 
 def run(command: str, args_list: list):
     if _platform == 'linux':
-        command = './' + command
+        command = './%s' % command
+    elif _platform == 'win32':
+        command = '%s.exe' % command 
 
     return subprocess.check_output([command] + args_list).split()
 
